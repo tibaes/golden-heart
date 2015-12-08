@@ -7,4 +7,4 @@ c.NotebookApp.password = u'sha1:1dd2478c7247:b0de6a84a410ef6889a742ea5cc34a83be0
 c.NotebookApp.open_browser = False
 
 # It is a good idea to set a known, fixed port for server access
-c.NotebookApp.port = 9999
+c.NotebookApp.port = 9999 
