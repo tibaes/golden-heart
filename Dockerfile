@@ -3,8 +3,10 @@ MAINTAINER hi@fael.nl
 
 # build
 RUN sed -i s/archive/br.archive/ /etc/apt/sources.list
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository -yu ppa:staticfloat/juliareleases
 RUN apt-get update && apt-get install -y aptitude build-essential cmake ninja pkg-config
-RUN apt-get update && apt-get install -y wget curl git zip 
+RUN apt-get update && apt-get install -y wget curl git zip ssh screen
 RUN apt-get update && apt-get install -y julia ruby python fish
 
 # vim
@@ -28,8 +30,10 @@ RUN cd ~ && wget http://dlib.net/files/dlib-18.18.tar.bz2 && \
 RUN cd ~ && apt-get update && apt-get install -y python-pip python-dev build-essential libmagickwand-6.q16-2 && \
   pip install --upgrade pip && pip install jsonschema jinja2 tornado pyzmq ipython jupyter
 
-RUN julia -e 'Pkg.add("IJulia")'
 RUN julia -e 'Pkg.add("Images")'
+RUN julia -e 'Pkg.add("ImageMagick")'
+RUN julia -e 'Pkg.add("IJulia")'
+RUN julia -e 'Pkg.build("IJulia")'
 
 COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
 COPY mycert.pem /root/mycert.pem
