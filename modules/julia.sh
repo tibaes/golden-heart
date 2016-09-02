@@ -3,7 +3,7 @@
 aptitude update
 aptitude install -y julia
 
-echo "#!/bin/bash\njupyter notebook --no-browser --certfile=/root/mycert.pem --keyfile=/root/mykey.key" >> /root/ijulia.sh
+echo -e "#!/bin/bash\njupyter notebook --no-browser --certfile=/root/mycert.pem --keyfile=/root/mykey.key" >> /root/ijulia.sh
 chmod +x /root/ijulia.sh
 
 julia -e 'Pkg.add("Images")'
