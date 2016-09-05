@@ -18,4 +18,4 @@ COPY mycert.pem /root/mycert.pem
 COPY mykey.key /root/mykey.key
 EXPOSE 9999
 
-CMD fish
+CMD bash
