@@ -1,7 +1,6 @@
 RUN aptitude update
 RUN aptitude install -y julia
 
-RUN cd /tmp
 RUN aptitude install -y python-pip python-dev build-essential libmagickwand-6.q16-2
 RUN pip install --upgrade pip && pip install jsonschema jinja2 tornado pyzmq ipython jupyter
 
