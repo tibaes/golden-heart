@@ -1,0 +1,14 @@
+RUN aptitude update
+RUN aptitude install -y julia
+
+RUN cd /tmp
+RUN aptitude install -y python-pip python-dev build-essential libmagickwand-6.q16-2
+RUN pip install --upgrade pip && pip install jsonschema jinja2 tornado pyzmq ipython jupyter
+
+RUN echo -e "#!/bin/bash\njupyter notebook --no-browser --certfile=/root/mycert.pem --keyfile=/root/mykey.key" >> /root/ijulia.sh
+RUN chmod +x /root/ijulia.sh
+
+RUN julia -e 'Pkg.add("Images")'
+RUN julia -e 'Pkg.add("ImageMagick")'
+RUN julia -e 'Pkg.add("IJulia")'
+RUN julia -e 'Pkg.build("IJulia")'

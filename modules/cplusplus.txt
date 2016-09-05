@@ -1,0 +1,28 @@
+RUN aptitude update
+RUN aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
+RUN aptitude install -y libx11-dev libopenblas-dev liblapack-dev
+
+# opencv
+
+ARG opencv_version="3.1.0"
+RUN cd /tmp
+RUN wget https://github.com/Itseez/opencv/archive/$opencv_version.zip
+RUN unzip $opencv_version.zip
+RUN git clone https://github.com/Itseez/opencv_contrib.git
+RUN mkdir opencv-$opencv_version/build
+RUN cd opencv-$opencv_version/build
+RUN cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_AVX2=ON -DENABLE_SSE42=ON
+RUN ninja
+RUN ninja install
+
+# dlib
+
+ARG dlib_version="19.1"
+RUN cd /tmp
+RUN wget http://dlib.net/files/dlib-$dlib_version.tar.bz2
+RUN tar xjf dlib-$dlib_version.tar.bz2
+RUN mkdir dlib-$dlib_version/build
+RUN cd dlib-$dlib_version/build
+RUN cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE
+RUN ninja
+RUN ninja install
