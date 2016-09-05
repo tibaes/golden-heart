@@ -12,3 +12,8 @@ RUN julia -e 'Pkg.add("Images")'
 RUN julia -e 'Pkg.add("ImageMagick")'
 RUN julia -e 'Pkg.add("IJulia")'
 RUN julia -e 'Pkg.build("IJulia")'
+
+COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
+COPY mycert.pem /root/mycert.pem
+COPY mykey.key /root/mykey.key
+EXPOSE 9999
