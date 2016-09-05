@@ -6,9 +6,8 @@ RUN apt-get update
 RUN apt-get install -y aptitude
 
 RUN aptitude update
-RUN aptitude install -y wget curl git zip ssh screen ruby python fish
+RUN aptitude install -y wget curl git zip ssh screen ruby python fish debconf
 
-RUN cd /tmp
 RUN aptitude install -y clang-format vim
 RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/5d9360cbab3e0a25258776eab6d6c2108d0b7f2b/vimrc
 RUN mv vimrc ~/.vimrc
