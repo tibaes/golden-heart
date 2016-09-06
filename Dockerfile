@@ -12,15 +12,15 @@ ARG DLIB_VERSION="19.1"
 
 RUN apt-get update && apt-get install -y --no-install-recommends aptitude
 
-RUN apitude update && aptitude install -y --no-install-recommends wget curl git \
+RUN aptitude update && aptitude install -y wget curl git \
   zip bzip2 ca-certificates locales ssh screen tmux ruby python fish
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 
 # C++
 
-RUN apitude update && aptitude install -y --no-install-recommends build-essential cmake cmake-curses-gui ninja-build pkg-config
-RUN apitude update && aptitude install -y --no-install-recommends libx11-dev libopenblas-dev liblapack-dev libgtk2.0-dev
+RUN aptitude update && aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
+RUN aptitude update && aptitude install -y libx11-dev libopenblas-dev liblapack-dev libgtk2.0-dev
 
 # OpenCV
 
@@ -45,11 +45,10 @@ RUN rm -rf dlib-$DLIB_VERSION.tar.bz2 dlib-$DLIB_VERSION
 
 # Vim
 
-RUN apitude update && aptitude install -y --no-install-recommends clang-format vim
+RUN aptitude update && aptitude install -y clang-format vim
 RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227f504289a4b31388d8297fce6e40b7ee88f5b/vimrc
 RUN mv vimrc ~/.vimrc
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
 
 # Jupyter (Python3 & Julia4)
 
