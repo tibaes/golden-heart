@@ -11,9 +11,9 @@ if [ $alreadyBuilt -eq 0 ]
 then
   # If hasn't, create a new one
   docker run -d -it -p ${port_ijulia}:9999 --name ${container} ${image}:${version}
-  docker cp ~/.ssh ${container}:/root/
-  docker attach ${container}
+  docker cp ~/.ssh ${container}:/home/developer/
   echo "All done."
+  docker attach ${container}
 else
   # If already has ont, re start it
   docker start -i ${container}
