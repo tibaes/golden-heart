@@ -7,6 +7,8 @@ ENV LC_ALL en_US.UTF-8
 
 ARG OPENCV_VERSION="3.1.0"
 ARG DLIB_VERSION="19.1"
+ARG CUDNN_RUNTIME="libcudnn5_5.1.5-1+cuda8.0_amd64.deb"
+ARG CUDNN_DEVELOP="libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb"
 
 # Core
 
@@ -22,26 +24,37 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 RUN aptitude update && aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
 RUN aptitude update && aptitude install -y libx11-dev libopenblas-dev liblapack-dev libgtk2.0-dev
 
+# Jupyter (Python3 & Julia4)
+
+RUN aptitude update && aptitude install -y libmagickwand-6.q16-2 python3 python3-dev python3-pip julia
+RUN pip3 install --upgrade pip
+RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
+RUN julia -e 'Pkg.add("IJulia")'
+
+# CuDNN
+
+COPY archive/$CUDNN_RUNTIME /root/$CUDNN_RUNTIME
+COPY archive/$CUDNN_DEVELOP /root/$CUDNN_DEVELOP
+RUN dpkg -i /root/$CUDNN_RUNTIME
+RUN dpkg -i /root/$CUDNN_DEVELOP
+
 # OpenCV
 
-RUN wget https://github.com/Itseez/opencv/archive/$OPENCV_VERSION.zip
-RUN unzip $OPENCV_VERSION.zip
-COPY opencv_cuda8.patch /tmp/opencv_cuda8.patch
-RUN cd opencv-$OPENCV_VERSION/modules/cudalegacy/src/ && patch < /tmp/opencv_cuda8.patch
-RUN mkdir opencv-$OPENCV_VERSION/build && cd opencv-$OPENCV_VERSION/build && \
+COPY archive/$OPENCV_VERSION.zip /root
+COPY opencv_cuda8.patch /root
+RUN cd /root && unzip $OPENCV_VERSION.zip
+RUN cd /root/opencv-$OPENCV_VERSION/modules/cudalegacy/src/ && patch < /root/opencv_cuda8.patch
+RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
   cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_AVX2=ON -DENABLE_SSE42=ON && \
   ninja && ninja install
-RUN rm -rf $OPENCV_VERSION.zip opencv-$OPENCV_VERSION
 
 # DLib
 
-RUN wget http://dlib.net/files/dlib-$DLIB_VERSION.tar.bz2
-RUN tar xjf dlib-$DLIB_VERSION.tar.bz2
-RUN mkdir dlib-$DLIB_VERSION/build
-RUN cd dlib-$DLIB_VERSION/build && \
+COPY archive/dlib-$DLIB_VERSION.tar.bz2 /root
+RUN cd /root && tar xjf dlib-$DLIB_VERSION.tar.bz2
+RUN mkdir /root/dlib-$DLIB_VERSION/build && cd /root/dlib-$DLIB_VERSION/build && \
   cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE && \
   ninja && ninja install
-RUN rm -rf dlib-$DLIB_VERSION.tar.bz2 dlib-$DLIB_VERSION
 
 # Vim
 
@@ -50,19 +63,11 @@ RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227
 RUN mv vimrc ~/.vimrc
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-# Jupyter (Python3 & Julia4)
-
-RUN aptitude update && aptitude install -y libmagickwand-6.q16-2 python3 python3-dev python3-pip julia
-RUN pip3 install --upgrade pip
-RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
-
-RUN julia -e 'Pkg.add("IJulia")'
-RUN julia -e 'Pkg.build("IJulia")'
-
 # Finnaly
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN rm -rf /root/*
 RUN mkdir /root/.jupyter
 COPY jupyter_notebook_config.py /root/.jupyter/
 COPY mycert.pem /root/

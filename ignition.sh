@@ -1,20 +1,12 @@
 #!/bin/bash
 
-container="goldenheart"
-image="goldenheart"
-version="1.0.0"
+mkdir archive
+cd archive
 
-port_ijulia="9999"
+echo "Downloading DLib 19.1 and OpenCV 3.1.0"
+wget http://dlib.net/files/dlib-19.1.tar.bz2
+wget https://github.com/Itseez/opencv/archive/3.1.0.zip
 
-alreadyBuilt=$(docker ps -a | grep ${container} | wc -l)
-if [ $alreadyBuilt -eq 0 ]
-then
-  # If hasn't, create a new one
-  docker run -d -it -p ${port_ijulia}:9999 --name ${container} ${image}:${version}
-  docker cp ~/.ssh ${container}:/home/developer/
-  echo "All done."
-  docker attach ${container}
-else
-  # If already has ont, re start it
-  docker start -i ${container}
-fi
+echo "Download cuDNN v5.1 Runtime Library for Linux (Deb): libcudnn5_5.1.5-1+cuda8.0_amd64.deb"
+echo "Download cuDNN v5.1 Developer Library for Linux (Deb): libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb"
+open https://developer.nvidia.com/rdp/cudnn-download
