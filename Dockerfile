@@ -22,6 +22,13 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 RUN aptitude update && aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
 RUN aptitude update && aptitude install -y libx11-dev libopenblas-dev liblapack-dev libgtk2.0-dev
 
+# CuDNN
+
+COPY libcudnn5_5.1.5-1+cuda8.0_amd64.deb /root/libcudnn5_5.1.5-1+cuda8.0_amd64.deb
+COPY libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb /root/libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb
+RUN dpkg -i /root/libcudnn5_5.1.5-1+cuda8.0_amd64.deb
+RUN dpkg -i /root/libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb
+
 # OpenCV
 
 RUN wget https://github.com/Itseez/opencv/archive/$OPENCV_VERSION.zip
@@ -55,9 +62,7 @@ RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubuserconte
 RUN aptitude update && aptitude install -y libmagickwand-6.q16-2 python3 python3-dev python3-pip julia
 RUN pip3 install --upgrade pip
 RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
-
 RUN julia -e 'Pkg.add("IJulia")'
-RUN julia -e 'Pkg.build("IJulia")'
 
 # Finnaly
 
