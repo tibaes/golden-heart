@@ -26,9 +26,9 @@ RUN aptitude update && aptitude install -y libx11-dev libopenblas-dev liblapack-
 
 RUN wget https://github.com/Itseez/opencv/archive/$OPENCV_VERSION.zip
 RUN unzip $OPENCV_VERSION.zip
-RUN git clone https://github.com/Itseez/opencv_contrib.git
-RUN mkdir opencv-$OPENCV_VERSION/build
-RUN cd opencv-$OPENCV_VERSION/build && \
+COPY opencv_cuda8.patch /tmp/opencv_cuda8.patch
+RUN cd opencv-$OPENCV_VERSION/modules/cudalegacy/src/ && patch < /tmp/opencv_cuda8.patch
+RUN mkdir opencv-$OPENCV_VERSION/build && cd opencv-$OPENCV_VERSION/build && \
   cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_AVX2=ON -DENABLE_SSE42=ON && \
   ninja && ninja install
 RUN rm -rf $OPENCV_VERSION.zip opencv-$OPENCV_VERSION
