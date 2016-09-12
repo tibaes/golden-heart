@@ -1,4 +1,4 @@
-FROM nvidia/cuda:7.5
+FROM nvidia/cuda:8.0
 MAINTAINER r@fael.nl
 
 ENV LANG en_US.UTF-8
