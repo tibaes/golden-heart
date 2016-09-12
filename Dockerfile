@@ -56,8 +56,6 @@ RUN aptitude update && aptitude install -y libmagickwand-6.q16-2 python3 python3
 RUN pip3 install --upgrade pip
 RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
 
-RUN julia -e 'Pkg.add("Images")'
-RUN julia -e 'Pkg.add("ImageMagick")'
 RUN julia -e 'Pkg.add("IJulia")'
 RUN julia -e 'Pkg.build("IJulia")'
 
