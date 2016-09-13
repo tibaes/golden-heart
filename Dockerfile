@@ -21,15 +21,14 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 
 # C++, Python3, Julia - OpenCV & DLib deps
 
-RUN aptitude update && aptitude install -y \
-  build-essential cmake cmake-curses-gui ninja-build pkg-config \
-  libx11-dev libgtk2.0-dev \
-  libopenblas-dev liblapack-dev libatlas-base-dev gfortran libtbb-dev \
-  libjasper-dev  libjpeg-dev libpng-dev libtiff-dev \
-  libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libv4l-dev \
-  python3 python3-dev python3-pip python3-numpy python3-scipy \
-  libmagickwand-6.q16-2 julia \
-  clang-format vim
+RUN aptitude update && aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
+RUN aptitude update && aptitude install -y libx11-dev libgtk2.0-dev
+RUN aptitude update && aptitude install -y libopenblas-dev liblapack-dev libatlas-base-dev gfortran libtbb-dev
+RUN aptitude update && aptitude install -y libjasper-dev  libjpeg-dev libpng-dev libtiff-dev
+RUN aptitude update && aptitude install -y libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libv4l-dev
+RUN aptitude update && aptitude install -y python3 python3-dev python3-pip python3-numpy python3-scipy
+RUN aptitude update && aptitude install -y libmagickwand-6.q16-2 julia
+RUN aptitude update && aptitude install -y clang-format vim
 
 # Jupyter
 
@@ -51,7 +50,7 @@ COPY opencv_cuda8.patch /root
 RUN cd /root && unzip $OPENCV_VERSION.zip
 RUN cd /root/opencv-$OPENCV_VERSION/modules/cudalegacy/src/ && patch < /root/opencv_cuda8.patch
 RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
-  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_AVX2=ON -DENABLE_SSE42=ON -DINSTALL_PYTHON_EXAMPLES=ON && \
+  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_AVX2=ON -DENABLE_SSE42=ON -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
   ninja && ninja install
 
 # DLib
