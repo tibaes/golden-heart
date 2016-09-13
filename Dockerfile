@@ -63,7 +63,8 @@ RUN mkdir /root/dlib-$DLIB_VERSION/build && cd /root/dlib-$DLIB_VERSION/build &&
 
 # Finnaly
 
-RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227f504289a4b31388d8297fce6e40b7ee88f5b/vimrc ~/.vimrc
+RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227f504289a4b31388d8297fce6e40b7ee88f5b/vimrc
+RUN mv vimrc ~/.vimrc
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
