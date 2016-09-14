@@ -19,14 +19,19 @@ RUN aptitude update && aptitude install -y wget curl git \
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 
-# C++
+# C++, Python3, Julia - OpenCV & DLib deps
 
 RUN aptitude update && aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
-RUN aptitude update && aptitude install -y libx11-dev libopenblas-dev liblapack-dev libgtk2.0-dev
+RUN aptitude update && aptitude install -y libx11-dev libgtk2.0-dev
+RUN aptitude update && aptitude install -y libopenblas-dev liblapack-dev libatlas-base-dev gfortran libtbb-dev
+RUN aptitude update && aptitude install -y libjasper-dev  libjpeg-dev libpng-dev libtiff-dev
+RUN aptitude update && aptitude install -y libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libv4l-dev
+RUN aptitude update && aptitude install -y python3 python3-dev python3-pip python3-numpy python3-scipy
+RUN aptitude update && aptitude install -y libmagickwand-6.q16-2 julia
+RUN aptitude update && aptitude install -y clang-format vim
 
-# Jupyter (Python3 & Julia4)
+# Jupyter
 
-RUN aptitude update && aptitude install -y libmagickwand-6.q16-2 python3 python3-dev python3-pip julia
 RUN pip3 install --upgrade pip
 RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
 RUN julia -e 'Pkg.add("IJulia")'
@@ -45,8 +50,9 @@ COPY opencv_cuda8.patch /root
 RUN cd /root && unzip $OPENCV_VERSION.zip
 RUN cd /root/opencv-$OPENCV_VERSION/modules/cudalegacy/src/ && patch < /root/opencv_cuda8.patch
 RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
-  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_AVX2=ON -DENABLE_SSE42=ON && \
+  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_AVX2=ON -DENABLE_SSE42=ON -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
   ninja && ninja install
+RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-34m.so /usr/local/lib/python3.4/dist-packages/
 
 # DLib
 
@@ -56,18 +62,14 @@ RUN mkdir /root/dlib-$DLIB_VERSION/build && cd /root/dlib-$DLIB_VERSION/build &&
   cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE && \
   ninja && ninja install
 
-# Vim
+# Finnaly
 
-RUN aptitude update && aptitude install -y clang-format vim
 RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227f504289a4b31388d8297fce6e40b7ee88f5b/vimrc
 RUN mv vimrc ~/.vimrc
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-# Finnaly
-
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN rm -rf /root/*
 RUN mkdir /root/.jupyter
 COPY jupyter_notebook_config.py /root/.jupyter/
 COPY mycert.pem /root/
