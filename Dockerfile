@@ -9,6 +9,8 @@ ARG OPENCV_VERSION="3.1.0"
 ARG DLIB_VERSION="19.1"
 ARG CUDNN_RUNTIME="libcudnn5_5.1.5-1+cuda8.0_amd64.deb"
 ARG CUDNN_DEVELOP="libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb"
+ARG JULIA="julia-0.4.6-linux-x86_64.tar.gz"
+ARG JULIA_PATH="julia-2e358ce975"
 
 # Core
 
@@ -19,7 +21,7 @@ RUN aptitude update && aptitude install -y wget curl git \
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 
-# C++, Python3, Julia, Jupyter - OpenCV & DLib deps
+# C++, Python3, Jupyter - OpenCV & DLib deps
 
 RUN aptitude update && aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
 RUN aptitude update && aptitude install -y libx11-dev libgtk2.0-dev
@@ -27,7 +29,6 @@ RUN aptitude update && aptitude install -y libopenblas-dev liblapack-dev libatla
 RUN aptitude update && aptitude install -y libjasper-dev  libjpeg-dev libpng-dev libtiff-dev
 RUN aptitude update && aptitude install -y libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libv4l-dev
 RUN aptitude update && aptitude install -y python3 python3-dev python3-pip python3-numpy python3-scipy libboost-python-dev
-RUN aptitude update && aptitude install -y imagemagick julia
 RUN aptitude update && aptitude install -y clang-format-3.8 vim
 
 RUN pip3 install --upgrade pip
@@ -59,22 +60,33 @@ RUN mkdir /root/dlib-$DLIB_VERSION/build && cd /root/dlib-$DLIB_VERSION/build &&
   cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE && \
   ninja && ninja install
 
-# Finnaly
+# Julia
 
-RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227f504289a4b31388d8297fce6e40b7ee88f5b/vimrc
-RUN mv vimrc ~/.vimrc
-RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+COPY archive/$JULIA /root
+RUN cd /root && tar xzf $JULIA
+RUN ln -s /root/$JULIA_PATH/bin/julia /usr/local/bin/julia
+RUN julia -e 'Pkg.update()'
+RUN julia -e 'Pkg.add("IJulia")'
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Jupyter Configuration
 
 RUN mkdir /root/.jupyter
 COPY jupyter_notebook_config.py /root/.jupyter/
 COPY mycert.pem /root/
 COPY mykey.key /root/
-RUN julia -e 'Pkg.add("IJulia")'
+
+# Vim Configuration
+
+RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227f504289a4b31388d8297fce6e40b7ee88f5b/vimrc
+RUN mv vimrc ~/.vimrc
+RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# Finnaly
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /playground
 WORKDIR /playground
 
-EXPOSE 9999
 CMD = fish
+EXPOSE 9999
