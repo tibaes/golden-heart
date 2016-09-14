@@ -70,7 +70,6 @@ RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubuserconte
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN rm -rf /root/*
 RUN mkdir /root/.jupyter
 COPY jupyter_notebook_config.py /root/.jupyter/
 COPY mycert.pem /root/
