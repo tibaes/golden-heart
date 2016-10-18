@@ -88,5 +88,5 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN mkdir /playground
 WORKDIR /playground
 
-CMD = fish
+CMD fish
 EXPOSE 9999
