@@ -92,6 +92,28 @@ Read the [Jupyter project documentation](http://jupyter-notebook.readthedocs.org
 
 ## Running Jupyter
 
+You are now able to run this docker as any other, by:
+
+```
+docker run --rm -it goldenheart:1.2.0
+```
+
+However, to use Jupyter notebooks, you must inform the port forwarding parameter, and run jupyter inside the container:
+
+```
+docker run --rm -p 9999:9999 -it goldenheart:1.2.0 fish
+jupyter-notebook
+```
+Open in a browser the address **https://localhost:9999**, accept the self-signed certificate and provide the password. Ta-dah!
+
+We recommend sharing the working directory and to enable instance persistence:
+```
+docker run --name="science" -v (pwd):/playground/ -p 9999:9999 -it goldenheart:1.2.0 fish
+```
+which can be restored with:
+```
+docker start -a science
+```
 
 ***
 *Im Narvi hain echant: Celebrimbor o Eregion teithant i thiw hin.*
