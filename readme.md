@@ -32,6 +32,40 @@ install the [Nvidia CUDA docker platform](https://devblogs.nvidia.com/parallelfo
 
 ## Install
 
+As the building procedure requires proprietary CuDNN, you must download it manually.
+The Dockerfile will search in the *archive* directory for the required files.
+Also, Julia, Dlib and OpenCV must be downloaded manually.
+We opted for manual download instead of letting it inside dockerfile for two reasons:
+in case of errors, you do not need to spend a lot of time downloading these giant files again;
+and CuDNN requires manual download anyway.
+In a future release, we may put OpenCV, Dlib and Julia inside the Dockerfile, however we do not have a legal solution for CuDNN.
+So, you need to create the *archive* directory and put the binaries there:
+
+
+```
+mkdir archive
+cd archive
+
+wget http://dlib.net/files/dlib-19.1.tar.bz2
+wget https://github.com/opencv/opencv/archive/3.1.0.zip
+wget https://julialang.s3.amazonaws.com/bin/linux/x64/0.4/julia-0.4.6-linux-x86_64.tar.gz
+```
+
+Now, open the [CuDNN download site](https://developer.nvidia.com/rdp/cudnn-download) and download the runtime and develop libraries for Debian 64bits & CUDA 8: *libcudnn5_5.1.5-1+cuda8.0_amd64.deb* and *libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb*. Put these files inside the *archive* directory.
+
+In the same directory as the Dockerfile, run:
+
+```
+docker build -t goldenheart:1.2.0 .
+```
+
+If your CPU does not have advanced instructions, as AVX2 and SSE4.2, you must
+override these flags in OpenCV. In this case, replace the above command with:
+
+```
+docker build --build-arg OPENCV_FLAGS="" -t goldenheart:1.2.0 .
+```
+
 ## Configuration
 
 Default jupyter password is "friend"; default port: 9999.
@@ -51,6 +85,9 @@ openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mykey.key -out mycer
 ***
 
 More information about secure jupyter notebooks can be found in the [project documentation](http://jupyter-notebook.readthedocs.org/en/latest/public_server.html).
+
+## Running Jupyter
+
 
 
 *Im Narvi hain echant: Celebrimbor o Eregion teithant i thiw hin.*
