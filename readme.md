@@ -1,9 +1,33 @@
-# Computer vision container
+# Golden Heart, a container for high performance computer vision research
 
 *Ennyn Durin aran Moria. Pedo mellon a minno.*
 
-## Install
+This container focuses in high performance computer vision and machine learning research.
+It was designed targeting the  [Nvidia CUDA docker platform](https://devblogs.nvidia.com/parallelforall/nvidia-docker-gpu-server-application-deployment-made-easy/),
+so it uses the image of the Nvidia CUDA 8.0 framework.
+This container requires CUDNN, however this is a proprietary library from NVidia and need to be downloaded manually.
+Above all this CUDA framework we install OpenCV and DLib with all GPU and CPU optimizations enabled by default.
+Also, we install Python3, Julia and Jupyter for running notebooks remotely.
+Naturally, OpenCV and DLib are compiled with CUDA and python support, so
+you can run your computer vision python notebooks with the highest performance.
 
+## Features
+
+* All the advantages of docker containers
+* NVidia CUDA 8.0 framework
+* CUDNN for running deep learning using GPU
+* OpenCV 3.1, patched for CUDA 8.0
+* DLib 19.1
+* Python 3
+* Julia 0.4.6
+* Jupyter notebooks
+* Fish shell, tmux and screen
+* C/C++, CMake and ninja builder
+* Vim with some useful plugins
+
+## Requirements
+
+## Install
 
 ## Configuration
 
