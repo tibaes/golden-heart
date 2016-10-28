@@ -1,6 +1,7 @@
 # Golden Heart, a container for high performance computer vision research
 
 *Ennyn Durin aran Moria. Pedo mellon a minno.*
+***
 
 This container focuses in high performance computer vision and machine learning research.
 It was designed targeting the Nvidia CUDA docker platform, so it uses the image of the Nvidia CUDA 8.0 framework.
@@ -68,26 +69,29 @@ docker build --build-arg OPENCV_FLAGS="" -t goldenheart:1.2.0 .
 
 ## Configuration
 
-Default jupyter password is "friend"; default port: 9999.
-Just in case you want another password, run inside python:
+The default Jupyter password is "friend" and the default port: 9999.
+Also, we provide a self-signed OpenSSL certificate to enable safe
+communication out-of-the-box.
+These are configurable in the provided file **jupyter_notebook_config.py**.
+Just in case you want another password, run inside python3:
 
-***
+```
 from notebook.auth import passwd
 passwd()
-***
+```
 
-Copy the result and replace the c.NotebookApp.password inside jupyter_notebook_config.py.
-If you want another port, change the c.NotebookApp.port parameter.
-And in case you want to replace the certificates for ssl, run:
+Copy the result and replace the ***c.NotebookApp.password*** parameter inside jupyter_notebook_config.py.
+If you want another port, change the ***c.NotebookApp.port*** parameter.
+Just in case you want to replace the SSL certificates for your own self-signed:
 
-***
+```
 openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mykey.key -out mycert.pem
-***
+```
 
-More information about secure jupyter notebooks can be found in the [project documentation](http://jupyter-notebook.readthedocs.org/en/latest/public_server.html).
+Read the [Jupyter project documentation](http://jupyter-notebook.readthedocs.org/en/latest/public_server.html) for more information about secure notebooks.
 
 ## Running Jupyter
 
 
-
+***
 *Im Narvi hain echant: Celebrimbor o Eregion teithant i thiw hin.*
