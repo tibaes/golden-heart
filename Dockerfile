@@ -78,9 +78,9 @@ COPY mykey.key /root/
 
 # Vim Configuration
 
-RUN wget https://gist.githubusercontent.com/tibaes/92a7255d84bde5f1fd7a/raw/3227f504289a4b31388d8297fce6e40b7ee88f5b/vimrc
-RUN mv vimrc ~/.vimrc
+COPY vimrc /root/.vimrc
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+RUN echo -e "Run inside vim\n:PlugInstall"
 
 # Finnaly
 
