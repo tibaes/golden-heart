@@ -47,6 +47,7 @@ RUN cd /root && tar xzf $JULIA_PACK
 RUN ln -s /root/$JULIA_PATH/bin/julia /usr/local/bin/julia
 RUN julia -e 'Pkg.update()'
 RUN julia -e 'Pkg.add("IJulia")'
+RUN julia -e 'Pkg.add("Cxx")'
 
 # Vim Configuration
 
