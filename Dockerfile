@@ -14,8 +14,6 @@ RUN aptitude update && aptitude install -y wget curl git \
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 
-# C++, Python3, Jupyter - OpenCV & DLib deps
-
 RUN aptitude update && aptitude install -y build-essential cmake cmake-curses-gui ninja-build pkg-config
 RUN aptitude update && aptitude install -y libx11-dev libgtk2.0-dev
 RUN aptitude update && aptitude install -y libopenblas-dev liblapack-dev libatlas-base-dev gfortran libtbb-dev
@@ -23,6 +21,8 @@ RUN aptitude update && aptitude install -y libjasper-dev  libjpeg-dev libpng-dev
 RUN aptitude update && aptitude install -y libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libv4l-dev
 RUN aptitude update && aptitude install -y python3 python3-dev python3-pip python3-numpy python3-scipy libboost-python-dev
 RUN aptitude update && aptitude install -y clang-format-3.8 vim
+
+# Jupyter
 
 RUN pip3 install --upgrade pip
 RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
@@ -48,13 +48,6 @@ RUN ln -s /root/$JULIA_PATH/bin/julia /usr/local/bin/julia
 RUN julia -e 'Pkg.update()'
 RUN julia -e 'Pkg.add("IJulia")'
 
-# Jupyter Configuration
-
-RUN mkdir /root/.jupyter
-COPY jupyter_notebook_config.py /root/.jupyter/
-COPY mycert.pem /root/
-COPY mykey.key /root/
-
 # Vim Configuration
 
 COPY vimrc /root/.vimrc
@@ -69,4 +62,4 @@ RUN mkdir /playground
 WORKDIR /playground
 
 CMD fish
-EXPOSE 9999
+EXPOSE 8888
