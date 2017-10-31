@@ -5,12 +5,6 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-ARG OPENCV_VERSION="3.1.0"
-ARG DLIB_VERSION="19.1"
-ARG JULIA="julia-0.4.6-linux-x86_64.tar.gz"
-ARG JULIA_PATH="julia-2e358ce975"
-ARG OPENCV_FLAGS="-DENABLE_AVX2=ON -DENABLE_SSE42=ON"
-
 # Core
 
 RUN apt-get update && apt-get install -y --no-install-recommends aptitude
@@ -35,16 +29,20 @@ RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
 
 # OpenCV
 
-# COPY archive/$OPENCV_VERSION.zip /root
-# RUN cd /root && unzip $OPENCV_VERSION.zip
-# RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
-#  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE $OPENCV_FLAGS -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
-#  ninja && ninja install
-# RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-34m.so /usr/local/lib/python3.4/dist-packages/
+RUN cd /root && wget https://github.com/opencv/opencv/archive/3.3.1.zip
+ARG OPENCV_VERSION="3.3.1"
+ARG OPENCV_FLAGS="-DENABLE_AVX2=ON -DENABLE_SSE42=ON"
+RUN cd /root && unzip $OPENCV_VERSION.zip
+RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
+    cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE $OPENCV_FLAGS -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
+    ninja && ninja install
+RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-linux-gnu.so /usr/local/lib/python3.5/dist-packages/
 
 # Julia
 
-COPY archive/$JULIA /root
+RUN cd /root && wget https://julialang.s3.amazonaws.com/bin/linux/x64/0.4/julia-0.4.6-linux-x86_64.tar.gz
+ARG JULIA="julia-0.4.6-linux-x86_64.tar.gz"
+ARG JULIA_PATH="julia-2e358ce975"
 RUN cd /root && tar xzf $JULIA
 RUN ln -s /root/$JULIA_PATH/bin/julia /usr/local/bin/julia
 RUN julia -e 'Pkg.update()'
@@ -66,6 +64,7 @@ RUN echo -e "Run inside vim\n:PlugInstall"
 # Finnaly
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN rm -rf archive
 
 RUN mkdir /playground
 WORKDIR /playground
