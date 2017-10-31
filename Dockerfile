@@ -1,4 +1,4 @@
-FROM nvidia/cuda:8.0
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 MAINTAINER r@fael.nl
 
 ENV LANG en_US.UTF-8
@@ -7,8 +7,6 @@ ENV LC_ALL en_US.UTF-8
 
 ARG OPENCV_VERSION="3.1.0"
 ARG DLIB_VERSION="19.1"
-ARG CUDNN_RUNTIME="libcudnn5_5.1.5-1+cuda8.0_amd64.deb"
-ARG CUDNN_DEVELOP="libcudnn5-dev_5.1.5-1+cuda8.0_amd64.deb"
 ARG JULIA="julia-0.4.6-linux-x86_64.tar.gz"
 ARG JULIA_PATH="julia-2e358ce975"
 ARG OPENCV_FLAGS="-DENABLE_AVX2=ON -DENABLE_SSE42=ON"
@@ -35,31 +33,22 @@ RUN aptitude update && aptitude install -y clang-format-3.8 vim
 RUN pip3 install --upgrade pip
 RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
 
-# CuDNN
-
-COPY archive/$CUDNN_RUNTIME /root/$CUDNN_RUNTIME
-COPY archive/$CUDNN_DEVELOP /root/$CUDNN_DEVELOP
-RUN dpkg -i /root/$CUDNN_RUNTIME
-RUN dpkg -i /root/$CUDNN_DEVELOP
-
 # OpenCV
 
-COPY archive/$OPENCV_VERSION.zip /root
-COPY opencv_cuda8.patch /root
-RUN cd /root && unzip $OPENCV_VERSION.zip
-RUN cd /root/opencv-$OPENCV_VERSION/modules/cudalegacy/src/ && patch < /root/opencv_cuda8.patch
-RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
-  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE $OPENCV_FLAGS -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
-  ninja && ninja install
-RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-34m.so /usr/local/lib/python3.4/dist-packages/
+# COPY archive/$OPENCV_VERSION.zip /root
+# RUN cd /root && unzip $OPENCV_VERSION.zip
+# RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
+#  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE $OPENCV_FLAGS -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
+#  ninja && ninja install
+# RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-34m.so /usr/local/lib/python3.4/dist-packages/
 
 # DLib
 
-COPY archive/dlib-$DLIB_VERSION.tar.bz2 /root
-RUN cd /root && tar xjf dlib-$DLIB_VERSION.tar.bz2
-RUN mkdir /root/dlib-$DLIB_VERSION/build && cd /root/dlib-$DLIB_VERSION/build && \
-  cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE && \
-  ninja && ninja install
+# COPY archive/dlib-$DLIB_VERSION.tar.bz2 /root
+# RUN cd /root && tar xjf dlib-$DLIB_VERSION.tar.bz2
+# RUN mkdir /root/dlib-$DLIB_VERSION/build && cd /root/dlib-$DLIB_VERSION/build && \
+#   cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE && \
+#   ninja && ninja install
 
 # Julia
 
