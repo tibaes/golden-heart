@@ -40,10 +40,10 @@ RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-lin
 
 # Julia
 
-RUN cd /root && wget https://julialang.s3.amazonaws.com/bin/linux/x64/0.4/julia-0.4.6-linux-x86_64.tar.gz
-ARG JULIA="julia-0.4.6-linux-x86_64.tar.gz"
-ARG JULIA_PATH="julia-2e358ce975"
-RUN cd /root && tar xzf $JULIA
+RUN cd /root && wget https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.1-linux-x86_64.tar.gz
+ARG JULIA_PACK="julia-0.6.1-linux-x86_64.tar.gz"
+ARG JULIA_PATH="julia-0d7248e2ff"
+RUN cd /root && tar xzf $JULIA_PACK
 RUN ln -s /root/$JULIA_PATH/bin/julia /usr/local/bin/julia
 RUN julia -e 'Pkg.update()'
 RUN julia -e 'Pkg.add("IJulia")'
@@ -64,7 +64,6 @@ RUN echo -e "Run inside vim\n:PlugInstall"
 # Finnaly
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN rm -rf archive
 
 RUN mkdir /playground
 WORKDIR /playground
