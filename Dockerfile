@@ -42,14 +42,6 @@ RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
 #  ninja && ninja install
 # RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-34m.so /usr/local/lib/python3.4/dist-packages/
 
-# DLib
-
-# COPY archive/dlib-$DLIB_VERSION.tar.bz2 /root
-# RUN cd /root && tar xjf dlib-$DLIB_VERSION.tar.bz2
-# RUN mkdir /root/dlib-$DLIB_VERSION/build && cd /root/dlib-$DLIB_VERSION/build && \
-#   cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE && \
-#   ninja && ninja install
-
 # Julia
 
 COPY archive/$JULIA /root
