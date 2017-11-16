@@ -29,12 +29,15 @@ RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
 
 # OpenCV
 
-RUN cd /root && wget https://github.com/opencv/opencv/archive/3.3.1.zip
 ARG OPENCV_VERSION="3.3.1"
 ARG OPENCV_FLAGS="-DENABLE_AVX2=ON -DENABLE_SSE42=ON"
-RUN cd /root && unzip $OPENCV_VERSION.zip
+RUN cd /root && wget -O opencv.zip https://github.com/opencv/opencv/archive/$OPENCV_VERSION.zip
+RUN cd /root && wget -O contrib.zip https://github.com/opencv/opencv_contrib/archive/$OPENCV_VERSION.zip
+RUN cd /root && unzip opencv.zip && unzip contrib.zip
 RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
-    cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE $OPENCV_FLAGS -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
+    cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE $OPENCV_FLAGS \
+    -DOPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib-$OPENCV_VERSION/modules \
+    -DPYTHON_EXECUTABLE=$(which python3) -DINSTALL_PYTHON_EXAMPLES=ON && \
     ninja && ninja install
 RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-linux-gnu.so /usr/local/lib/python3.5/dist-packages/
 
@@ -45,9 +48,9 @@ ARG JULIA_PACK="julia-0.6.1-linux-x86_64.tar.gz"
 ARG JULIA_PATH="julia-0d7248e2ff"
 RUN cd /root && tar xzf $JULIA_PACK
 RUN ln -s /root/$JULIA_PATH/bin/julia /usr/local/bin/julia
+RUN chmod +rx /root/$JULIA_PATH/*
 RUN julia -e 'Pkg.update()'
 RUN julia -e 'Pkg.add("IJulia")'
-RUN julia -e 'Pkg.add("Cxx")'
 
 # Vim Configuration
 
