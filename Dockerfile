@@ -1,11 +1,10 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-centos7
-MAINTAINER r@fael.nl
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-RUN yum update
+RUN yum groupinstall -y "Development tools"
 RUN yum install -y  wget \
                     unzip \
                     screen tmux \
@@ -14,22 +13,23 @@ RUN yum install -y  wget \
 
 # C/C++ CMake Python
 
-RUN RUN yum install -y  centos-release-scl && \
-        yum install -y  devtoolset-7-gcc* \
-                        devtoolset-7-valgrind \
-                        devtoolset-7-gdb \
-                        devtoolset-7-elfutils \
-                        clang \
-                        llvm-toolset-7 \
-                        llvm-toolset-7-cmake \
-                        rh-python36-python-pip \
-                        rh-git29-git \
-                        devtoolset-7-make
+RUN yum install -y  centos-release-scl && \
+    yum install -y  devtoolset-7-gcc* \
+                    devtoolset-7-valgrind \
+                    devtoolset-7-gdb \
+                    devtoolset-7-elfutils \
+                    clang \
+                    llvm-toolset-7 \
+                    llvm-toolset-7-cmake \
+                    rh-python36-python-pip \
+                    rh-git29-git \
+                    devtoolset-7-make
 
 RUN echo "source scl_source enable devtoolset-7" >> /etc/bashrc
 RUN echo "source scl_source enable llvm-toolset-7" >> /etc/bashrc
 RUN echo "source scl_source enable rh-python36" >> /etc/bashrc
 RUN echo "source scl_source enable rh-git29" >> /etc/bashrc
+RUN source /etc/bashrc
 
 RUN yum install -y qt5*devel
 RUN yum install -y gtk2-devel
@@ -47,10 +47,11 @@ RUN yum install -y  blas-devel \
 # Ninja builder
 
 RUN cd /tmp/ && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-   rpm -ivh epel-release-latest-7.noarch.rpm \
+   rpm -ivh epel-release-latest-7.noarch.rpm
 RUN yum -y --enablerepo=epel install ninja-build && \
    echo "alias ninja='ninja-build'" >> /etc/bashrc
 RUN yum remove -y epel-release-7-11
+RUN source /etc/bashrc
 
 # Fish
 
@@ -59,9 +60,12 @@ RUN yum install fish -y
 
 # Python libs & jupyter
 
-RUN pip3 install --upgrade pip
-RUN pip3 install numpy scipy matplotlib pandas tensorflow-gpu keras scikit-image scikit-learn
-RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
+RUN /opt/rh/rh-python36/root/usr/bin/pip3 install --upgrade pip
+RUN /opt/rh/rh-python36/root/usr/bin/pip3 install \
+        numpy scipy matplotlib pandas \
+        tensorflow-gpu keras \
+        scikit-image scikit-learn \
+        jsonschema jinja2 tornado pyzmq ipython jupyter
 
 # OpenCV
 
