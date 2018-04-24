@@ -32,8 +32,7 @@ RUN echo "source scl_source enable rh-python36" >> /etc/bashrc
 RUN echo "source scl_source enable rh-git29" >> /etc/bashrc
 
 RUN yum install -y qt5*devel
-
-# Sci Libs
+RUN yum install -y gtk2-devel
 
 RUN yum install -y  blas-devel \
                     lapack-devel \
@@ -45,16 +44,13 @@ RUN yum install -y  blas-devel \
                     libtiff-devel \
                     libv4l-devel
 
-# libx11-dev libgtk2.0-dev
-# libavcodec-dev libavutil-dev libavformat-dev libswscale-dev
-# libboost-python-dev
-
 # Ninja builder
 
 RUN cd /tmp/ && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
    rpm -ivh epel-release-latest-7.noarch.rpm \
 RUN yum -y --enablerepo=epel install ninja-build && \
    echo "alias ninja='ninja-build'" >> /etc/bashrc
+RUN yum remove -y epel-release-7-11
 
 # Fish
 
@@ -64,9 +60,8 @@ RUN yum install fish -y
 # Python libs & jupyter
 
 RUN pip3 install --upgrade pip
-RUN pip3 install numpy scipy matplotlib
+RUN pip3 install numpy scipy matplotlib pandas tensorflow-gpu keras scikit-image scikit-learn
 RUN pip3 install jsonschema jinja2 tornado pyzmq ipython jupyter
-# pandas, tensorflow, keras
 
 # OpenCV
 
@@ -76,21 +71,19 @@ RUN cd /root && wget -O contrib.zip https://github.com/opencv/opencv_contrib/arc
 RUN cd /root && unzip opencv.zip && unzip contrib.zip
 RUN mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
     cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE \
-    -DENABLE_CXX11=ON -DOPENCV_ENABLE_NONFREE=ON -DWITH_TBB=ON\
+    -DENABLE_CXX11=ON -DOPENCV_ENABLE_NONFREE=ON -DCUDA_HOST_COMPILER=/usr/bin/g++ \
     -DOPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib-$OPENCV_VERSION/modules \
     -DPYTHON_EXECUTABLE=$(which python3) && \
     ninja && ninja install
 RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-linux-gnu.so /usr/local/lib/python3.5/dist-packages/
-# cuda_host = /usr/bin/g++
 
 # Julia
 
-ARG JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.1-linux-x86_64.tar.gz"
-ARG JULIA_PATH="julia-0d7248e2ff"
+ARG JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.2-linux-x86_64.tar.gz"
+ARG JULIA_PATH="julia-d386e40c17"
 RUN cd /root && wget -O julia.tar.gz ${JULIA_URL} && tar xzf julia.tar.gz
-# mv /root/julia... /opt/...
-RUN ln -s /root/$JULIA_PATH/bin/julia /usr/local/bin/julia
-RUN chmod +rx /root/$JULIA_PATH/*
+RUN mv /root/$JULIA_PATH/ /opt/julia && chown -R root.root /opt/julia && chmod -R +rx /opt/julia
+RUN ln -s /opt/julia/bin/julia /usr/local/bin/julia
 RUN julia -e 'Pkg.update()'
 RUN julia -e 'Pkg.add("IJulia")'
 
