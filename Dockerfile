@@ -60,9 +60,8 @@ RUN echo "source scl_source enable rh-git29" >> /etc/bashrc
 
 ARG CMAKE_VERSION="3.11.1"
 RUN cd /root && wget https://cmake.org/files/v3.11/cmake-${CMAKE_VERSION}.tar.gz && tar xzf cmake-${CMAKE_VERSION}.tar.gz
-RUN source /etc/bashrc && cd /root/cmake-${CMAKE_VERSION}} && \
-        ./bootstrap --system-curl --parallel=4 --prefix=/usr &&
-        gmake
+RUN source /etc/bashrc && cd /root/cmake-${CMAKE_VERSION} && \
+        ./bootstrap --system-curl --parallel=4 --prefix=/usr && gmake
 
 # Ninja
 
