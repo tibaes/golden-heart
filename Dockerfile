@@ -90,7 +90,7 @@ RUN cd /root && wget -O opencv.zip https://github.com/opencv/opencv/archive/$OPE
 RUN cd /root && wget -O contrib.zip https://github.com/opencv/opencv_contrib/archive/$OPENCV_VERSION.zip
 RUN cd /root && unzip opencv.zip && unzip contrib.zip
 RUN source /etc/bashrc; mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/opencv-$OPENCV_VERSION/build && \
-    /usr/local/bin/cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE \
+    /root/cmake-${CMAKE_VERSION}/bin/cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE \
     -DENABLE_CXX11=ON -DOPENCV_ENABLE_NONFREE=ON -DCUDA_HOST_COMPILER=/usr/bin/g++ \
     -DOPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib-$OPENCV_VERSION/modules \
     -DPYTHON_EXECUTABLE=$(which python3) && \
