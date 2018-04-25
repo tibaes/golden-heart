@@ -72,7 +72,7 @@ RUN cd /root && unzip ninja-linux.zip && mv ninja /usr/local/bin/
 # Fish
 
 ARG FISH_VERSION="2.7.1-1.1"
-RUN wget https://download.opensuse.org/repositories/shells:/fish:/release:/2/CentOS_7/x86_64/fish-${FISH_VERSION}.x86_64.rpm
+RUN cd /root && wget https://download.opensuse.org/repositories/shells:/fish:/release:/2/CentOS_7/x86_64/fish-${FISH_VERSION}.x86_64.rpm
 RUN cd /root && rpm -i fish-${FISH_VERSION}.x86_64.rpm
 
 # Python libs & jupyter
@@ -110,7 +110,7 @@ RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia")'
 
 # # Finnaly
 
-RUN rm -rf /tmp/*.rpm /root/*opencv* /root/*julia* /root/*cmake* /root/*ninja*
+RUN rm -rf /root/*.{rpm,tar.gz,opencv,julia,cmake,ninja}*
 
 # # Vim Configuration
 
