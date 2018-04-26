@@ -75,6 +75,11 @@ ARG FISH_VERSION="2.7.1-1.1"
 RUN cd /root && wget https://download.opensuse.org/repositories/shells:/fish:/release:/2/CentOS_7/x86_64/fish-${FISH_VERSION}.x86_64.rpm
 RUN cd /root && rpm -i fish-${FISH_VERSION}.x86_64.rpm
 
+# FFMpeg
+
+RUN yum -y install epel-release && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+RUN yum install ffmpeg ffmpeg-devel -y
+
 # Python libs & jupyter
 
 RUN source /etc/bashrc; pip3 install --upgrade pip
@@ -93,24 +98,30 @@ RUN source /etc/bashrc; mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/ope
     /root/cmake-${CMAKE_VERSION}/bin/cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE \
     -DENABLE_CXX11=ON -DOPENCV_ENABLE_NONFREE=ON -DCUDA_HOST_COMPILER=/usr/bin/g++ \
     -DOPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib-$OPENCV_VERSION/modules \
-    -DPYTHON_EXECUTABLE=$(which python3) && \
-    ninja && ninja install
-RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-linux-gnu.so /usr/local/lib/python3.5/dist-packages/
+    -DPYTHON_EXECUTABLE=$(which python3) \
+    -DPYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+    -DPYTHON3_LIBRARY=/opt/rh/rh-python36/root/usr/lib64/libpython3.6m.so.rh-python36-1.0 \
+    -DPYTHON3_LIBRARIES=/opt/rh/rh-python36/root/usr/bin/ \
+    -DPYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
+    -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON \
+    && ninja && ninja install
+RUN cp -r /root/opencv-$OPENCV_VERSION/build/share/OpenCV/* /usr/local/share/OpenCV/
+# RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-linux-gnu.so /usr/local/lib/python3.5/dist-packages/
 # /opt/rh/rh-python36/root/lib/python3.6/site-packages/
 
 # Julia
 
-ARG JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.2-linux-x86_64.tar.gz"
-ARG JULIA_PATH="julia-d386e40c17"
-RUN cd /root && wget -O julia.tar.gz ${JULIA_URL} && tar xzf julia.tar.gz
-RUN mv /root/$JULIA_PATH/ /opt/julia && chown -R root.root /opt/julia && chmod -R +rx /opt/julia
-RUN ln -s /opt/julia/bin/julia /usr/local/bin/julia
-RUN source /etc/bashrc; julia -e 'Pkg.update()'
-RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia")'
+# ARG JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.2-linux-x86_64.tar.gz"
+# ARG JULIA_PATH="julia-d386e40c17"
+# RUN cd /root && wget -O julia.tar.gz ${JULIA_URL} && tar xzf julia.tar.gz
+# RUN mv /root/$JULIA_PATH/ /opt/julia && chown -R root.root /opt/julia && chmod -R +rx /opt/julia
+# RUN ln -s /opt/julia/bin/julia /usr/local/bin/julia
+# RUN source /etc/bashrc; julia -e 'Pkg.update()'
+# RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia")'
 
 # # Finnaly
 
-RUN rm -rf /root/*.{rpm,tar.gz,opencv,julia,cmake,ninja}*
+# RUN rm -rf /root/*.{rpm,tar.gz,opencv,julia,cmake,ninja}*
 
 # # Vim Configuration
 
@@ -122,5 +133,5 @@ RUN rm -rf /root/*.{rpm,tar.gz,opencv,julia,cmake,ninja}*
 RUN mkdir /playground
 WORKDIR /playground
 
-CMD fish
+CMD bash
 EXPOSE 8888
