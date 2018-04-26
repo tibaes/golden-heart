@@ -47,6 +47,7 @@ RUN yum install -y  centos-release-scl && \
                     clang \
                     llvm-toolset-7 \
                     llvm-toolset-7-cmake \
+                    rh-python36-python-devel \
                     rh-python36-python-pip \
                     rh-git29-git \
                     devtoolset-7-make
@@ -103,8 +104,8 @@ RUN source /etc/bashrc; mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/ope
     -DPYTHON3_LIBRARY=/opt/rh/rh-python36/root/usr/lib64/libpython3.6m.so.rh-python36-1.0 \
     -DPYTHON3_LIBRARIES=/opt/rh/rh-python36/root/usr/bin/ \
     -DPYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
-    -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON \
-    && ninja && ninja install
+    -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON
+RUN source /etc/bashrc; cd /root/opencv-$OPENCV_VERSION/build; ninja && ninja install
 RUN cp -r /root/opencv-$OPENCV_VERSION/build/share/OpenCV/* /usr/local/share/OpenCV/
 # RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-linux-gnu.so /usr/local/lib/python3.5/dist-packages/
 # /opt/rh/rh-python36/root/lib/python3.6/site-packages/
