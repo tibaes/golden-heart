@@ -112,24 +112,17 @@ RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-36m-x86_64-lin
 
 # Julia
 
-# ARG JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.2-linux-x86_64.tar.gz"
-# ARG JULIA_PATH="julia-d386e40c17"
-# RUN cd /root && wget -O julia.tar.gz ${JULIA_URL} && tar xzf julia.tar.gz
-# RUN mv /root/$JULIA_PATH/ /opt/julia && chown -R root.root /opt/julia && chmod -R +rx /opt/julia
-# RUN ln -s /opt/julia/bin/julia /usr/local/bin/julia
-# RUN source /etc/bashrc; julia -e 'Pkg.update()'
-# RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia")'
+ARG JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.2-linux-x86_64.tar.gz"
+ARG JULIA_PATH="julia-d386e40c17"
+RUN cd /root && wget -O julia.tar.gz ${JULIA_URL} && tar xzf julia.tar.gz
+RUN mv /root/$JULIA_PATH/ /opt/julia && chown -R root.root /opt/julia && chmod -R +rx /opt/julia
+RUN ln -s /opt/julia/bin/julia /usr/local/bin/julia
+RUN source /etc/bashrc; julia -e 'Pkg.update()'
+RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia")'
 
-# # Finnaly
+# Finnaly
 
-# RUN rm -rf /root/*.{rpm,tar.gz,opencv,julia,cmake,ninja}*
-
-# # Vim Configuration
-
-# COPY vimrc /root/.vimrc
-# RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-# RUN echo -e "Run inside vim\n:PlugInstall"
-
+RUN rm -rf /root/*.{rpm,tar.gz,opencv,julia,cmake,ninja}*
 
 RUN mkdir /playground
 WORKDIR /playground
