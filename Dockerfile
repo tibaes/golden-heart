@@ -99,16 +99,16 @@ RUN source /etc/bashrc; mkdir /root/opencv-$OPENCV_VERSION/build && cd /root/ope
     /root/cmake-${CMAKE_VERSION}/bin/cmake .. -G"Ninja" -DCMAKE_BUILD_TYPE=RELEASE \
     -DENABLE_CXX11=ON -DOPENCV_ENABLE_NONFREE=ON -DCUDA_HOST_COMPILER=/usr/bin/g++ \
     -DOPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib-$OPENCV_VERSION/modules \
+    -DPYTHON2_EXECUTABLE=/usr/bin/python2 \
     -DPYTHON_EXECUTABLE=$(which python3) \
     -DPYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
     -DPYTHON3_LIBRARY=/opt/rh/rh-python36/root/usr/lib64/libpython3.6m.so.rh-python36-1.0 \
     -DPYTHON3_LIBRARIES=/opt/rh/rh-python36/root/usr/bin/ \
     -DPYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
-    -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON
-RUN source /etc/bashrc; cd /root/opencv-$OPENCV_VERSION/build; ninja && ninja install
+    -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON -DWITH_QT=ON
+RUN source /etc/bashrc && cd /root/opencv-$OPENCV_VERSION/build; ninja && ninja install
 RUN cp -r /root/opencv-$OPENCV_VERSION/build/share/OpenCV/* /usr/local/share/OpenCV/
-# RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-35m-x86_64-linux-gnu.so /usr/local/lib/python3.5/dist-packages/
-# /opt/rh/rh-python36/root/lib/python3.6/site-packages/
+RUN cp /root/opencv-$OPENCV_VERSION/build/lib/python3/cv2.cpython-36m-x86_64-linux-gnu.so /opt/rh/rh-python36/root/lib/python3.6/site-packages/
 
 # Julia
 
