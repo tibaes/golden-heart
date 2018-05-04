@@ -78,8 +78,8 @@ RUN cd /root && rpm -i fish-${FISH_VERSION}.x86_64.rpm
 
 # FFMpeg
 
-RUN yum -y install epel-release && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
-RUN yum install ffmpeg ffmpeg-devel -y
+#RUN yum -y install epel-release && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+#RUN yum install ffmpeg ffmpeg-devel -y
 
 # Python libs & jupyter
 
@@ -122,7 +122,7 @@ RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia")'
 
 # Finnaly
 
-RUN rm -rf /root/*.{rpm,tar.gz,opencv,julia,cmake,ninja}*
+RUN rm -rf /root/*{rpm,tar.gz,zip,opencv,julia,cmake,ninja}*
 
 RUN mkdir /playground
 WORKDIR /playground
