@@ -81,9 +81,8 @@ RUN cd /root && rpm -i fish-${FISH_VERSION}.x86_64.rpm
 ARG BOOST_VERSION="1.67.0"
 ARG BOOST_PACKAGE="1_67_0"
 RUN cd /root && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_PACKAGE}.tar.gz
-RUN cd /root && tar xvzf boost_1_67_0.tar.gz && cd boost_1_67_0/ \
-             && ./bootstrap.sh --prefix=/opt/boost \
-             && ./b2 install --prefix=/opt/boost --with=all
+RUN cd /root && tar xvzf boost_${BOOST_PACKAGE}.tar.gz && cd boost_${BOOST_PACKAGE}/ && ./bootstrap.sh --prefix=/opt/boost \
+RUN cd boost_${BOOST_PACKAGE}/ && ./b2 install --prefix=/opt/boost --with=all; exit 0
 
 # FFMpeg
 
