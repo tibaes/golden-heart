@@ -17,7 +17,8 @@ RUN yum install -y  wget \
                     ncurses-devel \
                     zlib-devel \
                     curl-devel \
-                    openssl-devel
+                    openssl-devel \
+                    which
 
 RUN yum install -y qt5*devel gtk2-devel
 
@@ -76,10 +77,18 @@ ARG FISH_VERSION="2.7.1-1.1"
 RUN cd /root && wget https://download.opensuse.org/repositories/shells:/fish:/release:/2/CentOS_7/x86_64/fish-${FISH_VERSION}.x86_64.rpm
 RUN cd /root && rpm -i fish-${FISH_VERSION}.x86_64.rpm
 
+# Boost
+ARG BOOST_VERSION="1.67.0"
+ARG BOOST_PACKAGE="1_67_0"
+RUN cd /root && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_PACKAGE}.tar.gz
+RUN cd /root && tar xvzf boost_1_67_0.tar.gz && cd boost_1_67_0/ \
+             && ./bootstrap.sh --prefix=/opt/boost \
+             && ./b2 install --prefix=/opt/boost --with=all
+
 # FFMpeg
 
-#RUN yum -y install epel-release && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
-#RUN yum install ffmpeg ffmpeg-devel -y
+RUN yum -y install epel-release && rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+RUN yum install ffmpeg ffmpeg-devel -y
 
 # Python libs & jupyter
 
@@ -118,11 +127,11 @@ RUN cd /root && wget -O julia.tar.gz ${JULIA_URL} && tar xzf julia.tar.gz
 RUN mv /root/$JULIA_PATH/ /opt/julia && chown -R root.root /opt/julia && chmod -R +rx /opt/julia
 RUN ln -s /opt/julia/bin/julia /usr/local/bin/julia
 RUN source /etc/bashrc; julia -e 'Pkg.update()'
-RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia")'
+RUN source /etc/bashrc; julia -e 'Pkg.add("IJulia"); Pkg.add("Cxx")'
 
 # Finnaly
 
-RUN rm -rf /root/*{rpm,tar.gz,zip,opencv,julia,cmake,ninja}*
+RUN rm -rf /root/*{rpm,tar.gz,zip,opencv,julia,cmake,ninja,boost}*
 
 RUN mkdir /playground
 WORKDIR /playground
